@@ -1,0 +1,9 @@
+.vscode/
+.idea/
+.pytest_cache/
+*__pycache__*
+.env
+.coverage
+coverage.xml
+htmlcov
+devfiles/*

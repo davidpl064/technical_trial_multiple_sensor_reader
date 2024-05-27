@@ -1,0 +1,35 @@
+name: app
+services:
+  nats:
+    image: nats
+    restart: always
+    ports:
+      - '4222:4222'
+  db:
+    image: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    # or set shared memory limit when deploy via swarm stack
+    volumes:
+      - /home/dplamarca/docker/postgresql:/var/lib/postgresql/data
+      # - ../multiple_sensor_reader/db/data:/var/lib/postgresql/data
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=sensor_reader
+      - POSTGRES_PASSWORD=1234
+    ports:
+      - '5432:5432'
+  multiple_sensor_reader:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: multiple_sensor_reader:latest
+    network_mode: host
+    command: $LAUNCH_APP_COMMAND
+    env_file:
+      - .env
